@@ -1,0 +1,43 @@
+API Key: 05f7db0eb20b02a8803d7f7d0f3fb520
+
+https://api.themoviedb.org/3/movie/550?api_key=05f7db0eb20b02a8803d7f7d0f3fb520
+
+//--------
+
+URL poster
+(https://www.themoviedb.org/talk/568e3711c3a36858fc002384)
+
+http://image.tmdb.org/t/p/w185/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg
+
+http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg
+
+= Coments =
+=> Hi again, these are the the sizes that I know: "w92", "w154", "w185", "w342", "w500", "w780", or "original";
+and I think there isn't any other sizes "original" will give you a very large poster, if you're on mobile "w185"
+is the best choice
+
+=> you can use w185_and_h278_bestv2 , I am using it for uniformity.
+
+<img class="poster fade lazyautosizes lazyloaded" data-sizes="auto"
+    data-src="https://image.tmdb.org/t/p/w185_and_h278_bestv2/9E2y5Q7WlCVNEhP5GiVTjhEhx1o.jpg"
+    data-srcset="https://image.tmdb.org/t/p/w185_and_h278_bestv2/9E2y5Q7WlCVNEhP5GiVTjhEhx1o.jpg 1x, https://image.tmdb.org/t/p/w370_and_h556_bestv2/9E2y5Q7WlCVNEhP5GiVTjhEhx1o.jpg 2x"
+    alt="It" sizes="185px"
+    srcset="https://image.tmdb.org/t/p/w185_and_h278_bestv2/9E2y5Q7WlCVNEhP5GiVTjhEhx1o.jpg 1x, https://image.tmdb.org/t/p/w370_and_h556_bestv2/9E2y5Q7WlCVNEhP5GiVTjhEhx1o.jpg 2x"
+    src="https://image.tmdb.org/t/p/w185_and_h278_bestv2/9E2y5Q7WlCVNEhP5GiVTjhEhx1o.jpg">
+
+
+//--------
+
+//--------
+
+URL population
+
+https://api.themoviedb.org/3/movie/popular?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=ru-RU&page=1
+
+
+//--------
+
+
+
+
+
