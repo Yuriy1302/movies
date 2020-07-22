@@ -2,16 +2,18 @@
   "name": "movies-pr",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://yuriy1302.github.io/movie",
+  "homepage": "http://yuriy1302.github.io/movies",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "antd": "^4.4.2",
+    "date-fns": "^2.15.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "typeface-inter": "^3.12.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,51 +1,55 @@
 export default class MovieService {
 
-    async getResource(movie) {
-      const resolve = await fetch(movie);
-  
-      if (!resolve.ok) {
-        throw new Error(`Could not fetch ${movie} received ${resolve.status}`);
-      }
-  
-      return await resolve.json();
-    };
-  
-    async getSearchMovies(searchMovie) {
-      const body = await this.getResource(searchMovie);
-      //console.log('body tr: ', body.results.map(this._transformSearchMovies));
-      return body.results.map(this._transformSearchMovies);
+  async getResource(movie) {
+    const resolve = await fetch(movie);
+
+    if (!resolve.ok) {
+      throw new Error(`Could not fetch ${movie} received ${resolve.status}`);
     }
+    
+    return await resolve.json();
+  };
   
-    /* _extractId(item) {
-          const idRegExp = /\/([0-9]*)\/$/;
-          return item.url.match(idRegExp)[1];
-      } */
-  
-    _transformSearchMovies = (movie) => {
-      //console.log('transform movie: ', movie.title);
-      return {
-        id: movie.id,
-        popularity: movie.popularity,
-        voteAverage: movie.vote_average,
-        title: movie.title,
-        originalTitle: movie.original_title,
-        overview: movie.overview,
-        posterPath: movie.poster_path,
-        releaseDate: movie.release_date,
-          };
-    }
-  
+  async getSearchMovies(searchMovie) {
+    const body = await this.getResource(searchMovie);
+    return body.results.map(this._transformSearchMovies);
   }
 
-/*   const searchMovie = 'return'; */
+  async getGenreNames() {
+    const resolve = await fetch('https://api.themoviedb.org/3/genre/movie/list?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=ru-RU');
+    
+    if (!resolve.ok) {
+      throw new Error(`Could not fetch 'genre' received ${resolve.status}`);
+    }
 
-  /* const getResource = (url) => {
-  const res = fetch(url);
-  return res.json();
-  //return body;
-};
+    const body = await resolve.json();
+    const { genres } = body;
+    return genres;
+  }
+  
+  _transformSearchMovies = (movie) => {
+    //console.log('transform movie: ', movie.genre_ids);
+    return {
+      id: movie.id,
+      popularity: movie.popularity,
+      voteAverage: movie.vote_average,
+      title: movie.title,
+      originalTitle: movie.original_title,
+      overview: movie.overview,
+      posterPath: movie.poster_path,
+      releaseDate: movie.release_date,
+      genreIds: movie.genre_ids,
+    };
+  }
+      
+}
 
-getResource('https://api.themoviedb.org/3/movie/popular?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=ru-RU&page=1')
+/*    const m = new MovieService();
+  m.getGenreNames().then(console.log);  */
+
+
+
+/*getResource('https://api.themoviedb.org/3/movie/popular?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=ru-RU&page=1')
   .then((body) => console.log(body)); */
   
 
@@ -71,10 +75,27 @@ getResource('https://api.themoviedb.org/3/movie/popular?api_key=05f7db0eb20b02a8
     
   }); */
 
+ 
+    /* _extractId(item) {
+          const idRegExp = /\/([0-9]*)\/$/;
+          return item.url.match(idRegExp)[1];
+      } */
 
 
-
-
+/* async buildGenresIds(genresData) {
+      const body = await this.getGenresId();
+      const {genres} = body;
+      console.log(genres);
+      let arr;
+      for (let i = 0; i < genresData.length; i += 1) {
+        for (let j = 0; j < genres.length; j += 1) {
+          if (genres[j].id === genresData[i]) arr[i] = genres[j].name;
+        }
+        
+      }
+      console.log(arr);
+      return arr;
+    } */
 
 
 

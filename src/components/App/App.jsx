@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { List, Card, Pagination, Input } from 'antd';
+import { List, Pagination, Input } from 'antd';
 
+import CardMovie from '../CardMovie'
 
-
-
-
-import MovieService from './movieapi-service';
+import MovieService from '../../movieapi-service';
 
 import 'antd/dist/antd.css';
+
+import './App.css';
 
 class App extends Component {
 
@@ -21,20 +21,24 @@ class App extends Component {
     super(props);
     this.state = {
 			searchMovie: `https://api.themoviedb.org/3/search/movie?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=en-US&query=return&page=${this.props.defaultCurrent}&include_adult=false`,
-      moviesList: [],
+			moviesList: [],
+			genreNames: [],	
 		}
-		
   }
 
   componentDidMount() {
-    this.updateSearchMovies(this.state.searchMovie);
+		this.addGenreNames();
+		this.updateSearchMovies(this.state.searchMovie);
+	}
+
+	addGenreNames = () => {
+		this.movieService
+			.getGenreNames()
+			.then((genreNames) => this.setState({ genreNames }) );
 	}
 
 	onSearchMoviesListLoaded = (moviesList) => {
-		
-		this.setState({
-			moviesList,
-		})
+		this.setState({ moviesList });
 	}
 	
 	updateSearchMovies = (movie) => {
@@ -47,24 +51,17 @@ class App extends Component {
     this.movieService
 			.getSearchMovies(`https://api.themoviedb.org/3/search/movie?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=en-US&query=return&page=${pageNumber}&include_adult=false`)
 			.then(this.onSearchMoviesListLoaded);
+			window.scrollTo(0, 0);
   }
-
-  
   
   render() {
 
-		console.log(this.state.moviesList);
-		
-
 		const { Search } = Input;
 
-		
-
 		return(
-			<div>
-
-		<Search
-					placeholder="input search text"
+			<div className="container">
+				<Search className="search-input"
+					placeholder="Input search text"
 					enterButton="Search"
 					size="large"
 					onSearch={value => {
@@ -73,56 +70,27 @@ class App extends Component {
 							.then(this.onSearchMoviesListLoaded);
 					}}
 				/>
+				<List className="list-align"
+						grid={{
+							gutter: 16,
+							md: 2,
+						}}
+						dataSource={this.state.moviesList}
+						renderItem={item => (
+							<CardMovie title={item.title}
+												posterPath={item.posterPath}
+												overview={item.overview}
+												releaseDate={item.releaseDate}
+												genreIds={item.genreIds}
+												genreNames={this.state.genreNames} />
+						)} />
 
-
-
-			<List
-					grid={{
-						gutter: 16,
-						md: 4,
-					}}
-					dataSource={this.state.moviesList}
-					renderItem={item => (
-						<List.Item>
-							<Card title={item.title} style={{ width: 300 }}>
-								
-								{item.posterPath ? <img src={`http://image.tmdb.org/t/p/w185${item.posterPath}`} alt="Poster" /> : <span><i>'No poster'</i></span>}
-								<p>{item.overview}</p>
-							</Card>
-						</List.Item>
-					)}
-				/>
-
-				
-
-			<Pagination defaultCurrent={1} total={50} onChange={this.onChange} />
-				
+				<Pagination className="pagination-align"
+							defaultCurrent={1} total={50}
+							onChange={this.onChange} />
 			</div>
 		);
 	};
 }
 
-
 export default App;
-
-/* {this.state.moviesList.map((el) => {
-					const {
-						id,
-						popularity,
-						voteAverage,
-						title,
-						originalTitle,
-						overview,
-						posterPath,
-						release
-					} = el;
-					return (
-						<span key={id}>
-							<Card title={title} style={{ width: 300 }}>
-								
-								<img src={`http://image.tmdb.org/t/p/w185${posterPath}`} alt="Poster" />
-								<p class="card-text">{el.overview}</p>
-							</Card>
-						</span>
-					);
-				})} */

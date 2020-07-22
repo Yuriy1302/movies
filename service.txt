@@ -1,10 +1,8 @@
-API Key: 05f7db0eb20b02a8803d7f7d0f3fb520
 
-https://api.themoviedb.org/3/movie/550?api_key=05f7db0eb20b02a8803d7f7d0f3fb520
 
 //--------
 
-URL poster
+URL poster !!!!!!!!!!!!
 (https://www.themoviedb.org/talk/568e3711c3a36858fc002384)
 
 http://image.tmdb.org/t/p/w185/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg
@@ -30,14 +28,39 @@ is the best choice
 
 //--------
 
-URL population
+URL population !!!!!!!!
 
 https://api.themoviedb.org/3/movie/popular?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=ru-RU&page=1
 
 
 //--------
 
+//--------
 
+GET
+/genre/movie/list
+Get the list of official genres for movies.
+https://api.themoviedb.org/3/genre/movie/list?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=ru-RU
+{
+  "genres": [
+    {
+      "id": 28,
+      "name": "боевик"
+    },
+    {
+      "id": 12,
+      "name": "приключения"
+    },
+    {
+      "id": 16,
+      "name": "мультфильм"
+    },
+    ...
+  ]
+}
 
+//--------
+
+//--------
 
 
