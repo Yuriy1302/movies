@@ -1,26 +1,26 @@
 .container {
-    width: 1010px;
-    background-color: #ffffff;
-    margin: 0 auto;
 
-    
-    position: relative;
+	width: 1010px;
+	background-color: #ffffff;
+	margin: 0 auto;
+	padding: 20px 32px;
+	position: relative;
 }
 
-.list-align {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
+.example {
+	display: block;
+	width: 100px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+  text-align: center;
 }
 
-.pagination-align {
-    margin: 20px auto;
-    position: relative;
-    left: 50%;
-    transform: translate(-50%, 0);
+.alert_example {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
-.search-input {
-    margin: 20px auto;
-    width: 80%;
-}

@@ -1,96 +1,123 @@
 import React, { Component } from 'react';
-import { List, Pagination, Input } from 'antd';
+import { Layout, List, Spin, Alert } from 'antd';
+import PropTypes from 'prop-types';
 
-import CardMovie from '../CardMovie'
+import CardMovie from '../CardMovie';
 
-import MovieService from '../../movieapi-service';
+import MovieService from '../../movie-service/movie-service';
 
 import 'antd/dist/antd.css';
 
 import './App.css';
 
 class App extends Component {
+  movieService = new MovieService();
 
-	movieService = new MovieService();
+  static defaultProps = {
+    defaultCurrent: 1,
+  };
 
-	static defaultProps = {
-		defaultCurrent: 1,
-	}
+  static propTypes = {
+    defaultCurrent: PropTypes.number,
+  };
 
   constructor(props) {
     super(props);
+    const { defaultCurrent } = this.props;
     this.state = {
-			searchMovie: `https://api.themoviedb.org/3/search/movie?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=en-US&query=return&page=${this.props.defaultCurrent}&include_adult=false`,
-			moviesList: [],
-			genreNames: [],	
-		}
+      searchMovie: `https://api.themoviedb.org/3/search/movie?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=en-US&query=return&page=${defaultCurrent}&include_adult=false`,
+      moviesList: [],
+      genreNames: [],
+      error: false,
+      loading: true,
+    };
   }
 
   componentDidMount() {
-		this.addGenreNames();
-		this.updateSearchMovies(this.state.searchMovie);
-	}
-
-	addGenreNames = () => {
-		this.movieService
-			.getGenreNames()
-			.then((genreNames) => this.setState({ genreNames }) );
-	}
-
-	onSearchMoviesListLoaded = (moviesList) => {
-		this.setState({ moviesList });
-	}
-	
-	updateSearchMovies = (movie) => {
-		this.movieService
-			.getSearchMovies(movie)
-			.then(this.onSearchMoviesListLoaded);
+    const { searchMovie } = this.state;
+    this.addGenreNames();
+    this.updateSearchMovies(searchMovie);
   }
 
-  onChange = (pageNumber) => {
+  onError = () => {
+    this.setState({
+      error: true,
+      loading: false,
+    });
+  };
+
+  addGenreNames = () => {
     this.movieService
-			.getSearchMovies(`https://api.themoviedb.org/3/search/movie?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=en-US&query=return&page=${pageNumber}&include_adult=false`)
-			.then(this.onSearchMoviesListLoaded);
-			window.scrollTo(0, 0);
-  }
-  
+      .getGenreNames()
+      .then((genreNames) => this.setState({ genreNames }))
+      .catch(this.onError);
+  };
+
+  onSearchMoviesListLoaded = (moviesList) => {
+    this.setState({
+      moviesList,
+      loading: false,
+    });
+  };
+
+  updateSearchMovies = (movie) => {
+    this.movieService.getSearchMovies(movie).then(this.onSearchMoviesListLoaded).catch(this.onError);
+  };
+
   render() {
+    const { Content } = Layout;
 
-		const { Search } = Input;
+    const { error, loading, moviesList, genreNames } = this.state;
 
-		return(
-			<div className="container">
-				<Search className="search-input"
-					placeholder="Input search text"
-					enterButton="Search"
-					size="large"
-					onSearch={value => {
-						this.movieService
-							.getSearchMovies(`https://api.themoviedb.org/3/search/movie?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=en-US&query=${value}&page=1&include_adult=false`)
-							.then(this.onSearchMoviesListLoaded);
-					}}
-				/>
-				<List className="list-align"
-						grid={{
-							gutter: 16,
-							md: 2,
-						}}
-						dataSource={this.state.moviesList}
-						renderItem={item => (
-							<CardMovie title={item.title}
-												posterPath={item.posterPath}
-												overview={item.overview}
-												releaseDate={item.releaseDate}
-												genreIds={item.genreIds}
-												genreNames={this.state.genreNames} />
-						)} />
+    if (error) {
+      return (
+        <div className="alert_example">
+          <Alert
+            type="warning"
+            message="Oops!"
+            description="Something went wrong!"
+            style={{ width: 300, fontSize: 18 }}
+            showIcon
+          />
+        </div>
+      );
+    }
 
-				<Pagination className="pagination-align"
-							defaultCurrent={1} total={50}
-							onChange={this.onChange} />
-			</div>
-		);
-	};
+    if (loading) {
+      return (
+        <div className="example">
+          <Spin size="large" />
+        </div>
+      );
+    }
+
+    return (
+      <Layout className="container">
+        <Content>
+          <List
+            className="list-align"
+            justify="space-around"
+            grid={{
+              gutter: 36,
+              md: 2,
+            }}
+            dataSource={moviesList}
+            renderItem={(item) => (
+              <CardMovie
+                id={item.id}
+                title={item.title}
+                posterPath={item.posterPath}
+                overview={item.overview}
+                releaseDate={item.releaseDate}
+                genreIds={item.genreIds}
+                genreNames={genreNames}
+              />
+            )}
+          />
+        </Content>
+      </Layout>
+    );
+  }
 }
 
 export default App;
