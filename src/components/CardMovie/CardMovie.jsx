@@ -15,13 +15,13 @@ class CardMovie extends React.Component {
   };
 
   static propTypes = {
-    genreNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-    id: PropTypes.string.isRequired,
+    genreNames: PropTypes.arrayOf(PropTypes.object).isRequired,
+    id: PropTypes.number.isRequired,
     title: PropTypes.string,
     posterPath: PropTypes.string,
     overview: PropTypes.string,
     releaseDate: PropTypes.string,
-    genreIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+    genreIds: PropTypes.arrayOf(PropTypes.number).isRequired,
   };
 
   croppingText = (text) => {
@@ -61,7 +61,7 @@ class CardMovie extends React.Component {
             <span className="card-movie__date">{dateRelise}</span>
             <Content>
               {genreIds.map((item) => (
-                <Tag>{this.transformGenreName(item)}</Tag>
+                <Tag key={item}>{this.transformGenreName(item)}</Tag>
               ))}
             </Content>
             <p className="card-movie__overview">{this.croppingText(overview)}</p>
