@@ -1,4 +1,8 @@
 export default class MovieService {
+  apiKey = '?api_key=05f7db0eb20b02a8803d7f7d0f3fb520';
+
+  baseApi = 'https://api.themoviedb.org/3';
+
   async getResource(movie) {
     try {
       const resolve = await fetch(movie);
@@ -13,9 +17,11 @@ export default class MovieService {
     }
   }
 
-  async getSearchMovies(searchMovie) {
+  async getSearchMovies(movie, page) {
     try {
-      const body = await this.getResource(searchMovie);
+      const body = await this.getResource(
+        `${this.baseApi}/search/movie${this.apiKey}&language=en-US&query=${movie}&page=${page}&include_adult=false`
+      );
       return body.results.map(this.transformSearchMovies);
     } catch (error) {
       throw new Error(`There is an error in search movies -> `, error);
@@ -24,9 +30,7 @@ export default class MovieService {
 
   async getGenreNames() {
     try {
-      const resolve = await fetch(
-        'https://api.themoviedb.org/3/genre/movie/list?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=en-US'
-      );
+      const resolve = await fetch(`${this.baseApi}/genre/movie/list${this.api_key}&language=en-US`);
 
       if (!resolve.ok) {
         throw new Error(`Could not fetch 'genre' received ${resolve.status}`);

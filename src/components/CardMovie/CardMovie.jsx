@@ -25,7 +25,10 @@ class CardMovie extends React.Component {
   };
 
   croppingText = (text) => {
-    return `${text.slice(0, text.indexOf(' ', 200))} ...`;
+    if (text.length < 160) {
+      return text;
+    }
+    return `${text.slice(0, text.indexOf(' ', 160))} ...`;
   };
 
   transformGenreName = (genreId) => {
@@ -39,7 +42,7 @@ class CardMovie extends React.Component {
 
     const { id, title, posterPath, overview, releaseDate, genreIds } = this.props;
 
-    const dateRelise = format(new Date(releaseDate), 'MMMM dd, yyyy');
+    const dateRelise = releaseDate ? format(new Date(releaseDate), 'MMMM dd, yyyy') : '-';
 
     return (
       <List.Item key={id}>
@@ -50,9 +53,9 @@ class CardMovie extends React.Component {
             posterPath ? (
               <img src={`http://image.tmdb.org/t/p/w185${posterPath}`} alt="Poster" />
             ) : (
-              <span className="no-poster">
+              <div className="no-poster">
                 <i>No poster</i>
-              </span>
+              </div>
             )
           }
         >

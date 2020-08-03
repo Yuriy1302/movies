@@ -38,10 +38,11 @@
 
 
 .no-poster {
-	display: block;
 	font-size: 22px;
 	font-weight: bold;
-	color: #6b6b6b;
-	width: 185px;
-	padding: 10px 0 0 10px;
+	color: #a8a8a8;
+	text-align: center;
+	min-width: 185px;
+	height: 100%;
+	padding: 10px 0 10px 10px;
 }

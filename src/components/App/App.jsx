@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Layout, List, Spin, Alert } from 'antd';
+import { debounce } from 'lodash';
+import { Layout, List, Spin, Alert, Input } from 'antd';
 import PropTypes from 'prop-types';
 
 import CardMovie from '../CardMovie';
@@ -14,29 +15,31 @@ class App extends Component {
   movieService = new MovieService();
 
   static defaultProps = {
-    defaultCurrent: 1,
+    defaultPage: 1,
+    defaultSearchMovie: 'return',
   };
 
   static propTypes = {
-    defaultCurrent: PropTypes.number,
+    defaultPage: PropTypes.number,
+    defaultSearchMovie: PropTypes.string,
   };
 
   constructor(props) {
     super(props);
-    const { defaultCurrent } = this.props;
     this.state = {
-      searchMovie: `https://api.themoviedb.org/3/search/movie?api_key=05f7db0eb20b02a8803d7f7d0f3fb520&language=en-US&query=return&page=${defaultCurrent}&include_adult=false`,
+      // searchMovie: '',
       moviesList: [],
       genreNames: [],
       error: false,
       loading: true,
     };
+    this.debouncedUpdate = debounce((value) => this.handleChange(value), 1500);
   }
 
   componentDidMount() {
-    const { searchMovie } = this.state;
+    const { defaultSearchMovie, defaultPage } = this.props;
     this.addGenreNames();
-    this.updateSearchMovies(searchMovie);
+    this.updateSearchMovies(defaultSearchMovie, defaultPage);
   }
 
   onError = () => {
@@ -60,8 +63,16 @@ class App extends Component {
     });
   };
 
-  updateSearchMovies = (movie) => {
-    this.movieService.getSearchMovies(movie).then(this.onSearchMoviesListLoaded).catch(this.onError);
+  updateSearchMovies = (movie, page) => {
+    this.movieService.getSearchMovies(movie, page).then(this.onSearchMoviesListLoaded).catch(this.onError);
+  };
+
+  handleChange = (value) => {
+    if (value.length < 1) {
+      return;
+    }
+    const { defaultPage } = this.props;
+    this.updateSearchMovies(value, defaultPage);
   };
 
   render() {
@@ -93,6 +104,14 @@ class App extends Component {
 
     return (
       <Layout className="container">
+        <Content>
+          <Input
+            placeholder="Type to search..."
+            size="large"
+            style={{ width: '100%', margin: '20px 0' }}
+            onChange={({ target: { value } }) => this.debouncedUpdate(value)}
+          />
+        </Content>
         <Content>
           <List
             className="list-align"
