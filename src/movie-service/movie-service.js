@@ -30,7 +30,7 @@ export default class MovieService {
 
   async getGenreNames() {
     try {
-      const resolve = await fetch(`${this.baseApi}/genre/movie/list${this.api_key}&language=en-US`);
+      const resolve = await fetch(`${this.baseApi}/genre/movie/list${this.apiKey}&language=en-US`);
 
       if (!resolve.ok) {
         throw new Error(`Could not fetch 'genre' received ${resolve.status}`);
