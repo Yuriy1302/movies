@@ -17,12 +17,25 @@ export default class MovieService {
     }
   }
 
-  async getSearchMovies(movie, page) {
+  /* async getSearchMovies(movie, page) {
     try {
       const body = await this.getResource(
         `${this.baseApi}/search/movie${this.apiKey}&language=en-US&query=${movie}&page=${page}&include_adult=false`
       );
       return body.results.map(this.transformSearchMovies);
+    } catch (error) {
+      throw new Error(`There is an error in search movies -> `, error);
+    }
+  } */
+  async getSearchMovies(movie, page) {
+    try {
+      const body = await this.getResource(
+        `${this.baseApi}/search/movie${this.apiKey}&language=en-US&query=${movie}&page=${page}&include_adult=false`
+      );
+      console.log('body => ', body);
+      const totalResults = body.total_results;
+      const results = body.results.map(this.transformSearchMovies);
+      return { totalResults, results };
     } catch (error) {
       throw new Error(`There is an error in search movies -> `, error);
     }

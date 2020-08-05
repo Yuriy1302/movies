@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { debounce } from 'lodash';
-import { Layout, List, Spin, Alert, Input } from 'antd';
+import { Layout, List, Spin, Alert } from 'antd';
 import PropTypes from 'prop-types';
 
 import CardMovie from '../CardMovie';
+import SearchMovie from '../SearchMovie';
+import PaginationMoviesList from '../PaginationMoviesList';
 
 import MovieService from '../../movie-service/movie-service';
 
@@ -20,20 +21,23 @@ class App extends Component {
   };
 
   static propTypes = {
+    page: PropTypes.number.isRequired,
     defaultPage: PropTypes.number,
     defaultSearchMovie: PropTypes.string,
   };
 
   constructor(props) {
     super(props);
+    const { defaultSearchMovie, defaultPage } = this.props;
     this.state = {
-      // searchMovie: '',
+      searchMovie: defaultSearchMovie,
+      page: defaultPage,
       moviesList: [],
+      totalResults: null,
       genreNames: [],
       error: false,
       loading: true,
     };
-    this.debouncedUpdate = debounce((value) => this.handleChange(value), 1500);
   }
 
   componentDidMount() {
@@ -41,6 +45,14 @@ class App extends Component {
     this.addGenreNames();
     this.updateSearchMovies(defaultSearchMovie, defaultPage);
   }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    const { page, searchMovie } = this.state;
+    if (page !== prevState.page) {
+      this.updateSearchMovies(searchMovie, page);
+    }
+    window.scroll(0, 0);
+  };
 
   onError = () => {
     this.setState({
@@ -56,9 +68,10 @@ class App extends Component {
       .catch(this.onError);
   };
 
-  onSearchMoviesListLoaded = (moviesList) => {
+  onSearchMoviesListLoaded = (res) => {
     this.setState({
-      moviesList,
+      moviesList: res.results,
+      totalResults: res.totalResults,
       loading: false,
     });
   };
@@ -67,18 +80,27 @@ class App extends Component {
     this.movieService.getSearchMovies(movie, page).then(this.onSearchMoviesListLoaded).catch(this.onError);
   };
 
-  handleChange = (value) => {
+  onDebounced = (value) => {
     if (value.length < 1) {
       return;
     }
-    const { defaultPage } = this.props;
-    this.updateSearchMovies(value, defaultPage);
+    const { page, defaultPage } = this.props;
+    this.setState({
+      searchMovie: value,
+      page: defaultPage,
+    });
+    this.updateSearchMovies(value, page);
+  };
+
+  onPageChange = (page) => {
+    this.setState({ page });
   };
 
   render() {
     const { Content } = Layout;
 
-    const { error, loading, moviesList, genreNames } = this.state;
+    const { error, loading, moviesList, genreNames, page, totalResults } = this.state;
+    const { defaultPage } = this.props;
 
     if (error) {
       return (
@@ -105,12 +127,7 @@ class App extends Component {
     return (
       <Layout className="container">
         <Content>
-          <Input
-            placeholder="Type to search..."
-            size="large"
-            style={{ width: '100%', margin: '20px 0' }}
-            onChange={({ target: { value } }) => this.debouncedUpdate(value)}
-          />
+          <SearchMovie onDebounced={this.onDebounced} />
         </Content>
         <Content>
           <List
@@ -134,6 +151,14 @@ class App extends Component {
             )}
           />
         </Content>
+        {totalResults > 20 ? (
+          <PaginationMoviesList
+            defaultPage={defaultPage}
+            page={page}
+            totalResults={totalResults}
+            onPageChange={this.onPageChange}
+          />
+        ) : null}
       </Layout>
     );
   }
