@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, List, Spin, Alert } from 'antd';
+import { Layout, List, Spin, Alert, Empty } from 'antd';
 import PropTypes from 'prop-types';
 
 import CardMovie from '../CardMovie';
@@ -18,10 +18,11 @@ class App extends Component {
   static defaultProps = {
     defaultPage: 1,
     defaultSearchMovie: 'return',
+    page: this.defaultPage,
   };
 
   static propTypes = {
-    page: PropTypes.number.isRequired,
+    page: PropTypes.number,
     defaultPage: PropTypes.number,
     defaultSearchMovie: PropTypes.string,
   };
@@ -96,6 +97,15 @@ class App extends Component {
     this.setState({ page });
   };
 
+  renderEmpty = () => {
+    return (
+      <Empty image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" imageStyle={{ height: 60 }}>
+        <h6>The search did not return any results.</h6>
+        <span>Try changing your request.</span>
+      </Empty>
+    );
+  };
+
   render() {
     const { Content } = Layout;
 
@@ -130,26 +140,30 @@ class App extends Component {
           <SearchMovie onDebounced={this.onDebounced} />
         </Content>
         <Content>
-          <List
-            className="list-align"
-            justify="space-around"
-            grid={{
-              gutter: 36,
-              md: 2,
-            }}
-            dataSource={moviesList}
-            renderItem={(item) => (
-              <CardMovie
-                id={item.id}
-                title={item.title}
-                posterPath={item.posterPath}
-                overview={item.overview}
-                releaseDate={item.releaseDate}
-                genreIds={item.genreIds}
-                genreNames={genreNames}
-              />
-            )}
-          />
+          {moviesList.length ? (
+            <List
+              className="list-align"
+              justify="space-around"
+              grid={{
+                gutter: 36,
+                md: 2,
+              }}
+              dataSource={moviesList}
+              renderItem={(item) => (
+                <CardMovie
+                  id={item.id}
+                  title={item.title}
+                  posterPath={item.posterPath}
+                  overview={item.overview}
+                  releaseDate={item.releaseDate}
+                  genreIds={item.genreIds}
+                  genreNames={genreNames}
+                />
+              )}
+            />
+          ) : (
+            this.renderEmpty()
+          )}
         </Content>
         {totalResults > 20 ? (
           <PaginationMoviesList
