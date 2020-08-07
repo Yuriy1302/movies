@@ -157,6 +157,7 @@ class App extends Component {
                   overview={item.overview}
                   releaseDate={item.releaseDate}
                   genreIds={item.genreIds}
+                  voteAverage={item.voteAverage}
                   genreNames={genreNames}
                 />
               )}

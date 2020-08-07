@@ -22,13 +22,14 @@ class CardMovie extends React.Component {
     overview: PropTypes.string,
     releaseDate: PropTypes.string,
     genreIds: PropTypes.arrayOf(PropTypes.number).isRequired,
+    voteAverage: PropTypes.number.isRequired,
   };
 
   croppingText = (text) => {
-    if (text.length < 160) {
+    if (text.length < 100) {
       return text;
     }
-    return `${text.slice(0, text.indexOf(' ', 160))} ...`;
+    return `${text.slice(0, text.indexOf(' ', 100))} ...`;
   };
 
   transformGenreName = (genreId) => {
@@ -37,12 +38,23 @@ class CardMovie extends React.Component {
     return el.name;
   };
 
+  ratingColor = (va) => {
+    if (va > 7) return '#66e900';
+    if (va > 5) return '#e9d100';
+    if (va > 3) return '#e97e00';
+    return '#e90000';
+  };
+
   render() {
     const { Content } = Layout;
 
-    const { id, title, posterPath, overview, releaseDate, genreIds } = this.props;
+    const { id, title, posterPath, overview, releaseDate, genreIds, voteAverage } = this.props;
 
     const dateRelise = releaseDate ? format(new Date(releaseDate), 'MMMM dd, yyyy') : '-';
+
+    const classRatingColor = {
+      borderColor: this.ratingColor(voteAverage),
+    };
 
     return (
       <List.Item key={id}>
@@ -69,6 +81,9 @@ class CardMovie extends React.Component {
             </Content>
             <p className="card-movie__overview">{this.croppingText(overview)}</p>
           </Space>
+          <div className="rating" style={classRatingColor}>
+            {voteAverage}
+          </div>
         </Card>
       </List.Item>
     );
