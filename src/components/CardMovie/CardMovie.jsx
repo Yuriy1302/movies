@@ -70,6 +70,11 @@ class CardMovie extends React.Component {
               </div>
             )
           }
+          extra={
+            <div className="rating" style={classRatingColor}>
+              {voteAverage}
+            </div>
+          }
         >
           <Space direction="vertical">
             <h5 className="card-movie__title">{title}</h5>
@@ -81,9 +86,6 @@ class CardMovie extends React.Component {
             </Content>
             <p className="card-movie__overview">{this.croppingText(overview)}</p>
           </Space>
-          <div className="rating" style={classRatingColor}>
-            {voteAverage}
-          </div>
         </Card>
       </List.Item>
     );
