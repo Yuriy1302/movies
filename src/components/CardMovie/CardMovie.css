@@ -1,5 +1,6 @@
 .card-movie {
 	display: flex;
+	justify-content: space-around;
 	font-family: 'Inter', Arial, Helvetica, sans-serif;
 	width: 454px;
 	height: 280px;
@@ -60,7 +61,7 @@
 	font-size: 12px;
 }
 
-.rate {
+.rate-stars {
 	position: absolute;
 	bottom: 10px;
 }

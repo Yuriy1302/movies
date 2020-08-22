@@ -1,7 +1,9 @@
 import React from 'react';
-import { Layout, List, Card, Space, Tag } from 'antd';
+import { Layout, List, Card, Space, Tag, Rate } from 'antd';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
+
+import { GenresConsumer } from '../ContextGenres';
 
 import './CardMovie.css';
 import '../../../node_modules/typeface-inter/inter.css'; // font 'Inter'
@@ -12,10 +14,10 @@ class CardMovie extends React.Component {
     posterPath: '',
     overview: '',
     releaseDate: '',
+    rating: '',
   };
 
   static propTypes = {
-    genreNames: PropTypes.arrayOf(PropTypes.object).isRequired,
     id: PropTypes.number.isRequired,
     title: PropTypes.string,
     posterPath: PropTypes.string,
@@ -23,6 +25,8 @@ class CardMovie extends React.Component {
     releaseDate: PropTypes.string,
     genreIds: PropTypes.arrayOf(PropTypes.number).isRequired,
     voteAverage: PropTypes.number.isRequired,
+    rating: PropTypes.number,
+    handleRateMovie: PropTypes.func.isRequired,
   };
 
   croppingText = (text) => {
@@ -32,10 +36,35 @@ class CardMovie extends React.Component {
     return `${text.slice(0, text.indexOf(' ', 100))} ...`;
   };
 
-  transformGenreName = (genreId) => {
+  croppingTitle = (text) => {
+    if (text.length < 30) {
+      return text;
+    }
+    return `${text.slice(0, text.indexOf(' ', 30))} ...`;
+  };
+
+  /* transformGenreName = (genreId) => {
     const { genreNames } = this.props;
     const [el] = genreNames.filter(({ id }) => genreId === id);
     return el.name;
+  }; */
+
+  renderGenres = (genreNames) => {
+    const { genreIds } = this.props;
+    const genres = genreIds
+      .map((item) => {
+        const [el] = genreNames.filter(({ id }) => item === id);
+        return el;
+      })
+      .slice(0, 3);
+
+    return (
+      <>
+        {genres.map((item) => (
+          <Tag key={item.id}>{item.name}</Tag>
+        ))}
+      </>
+    );
   };
 
   ratingColor = (va) => {
@@ -48,7 +77,7 @@ class CardMovie extends React.Component {
   render() {
     const { Content } = Layout;
 
-    const { id, title, posterPath, overview, releaseDate, genreIds, voteAverage } = this.props;
+    const { id, title, posterPath, overview, releaseDate, voteAverage, rating, handleRateMovie } = this.props;
 
     const dateRelise = releaseDate ? format(new Date(releaseDate), 'MMMM dd, yyyy') : '-';
 
@@ -70,21 +99,26 @@ class CardMovie extends React.Component {
               </div>
             )
           }
-          extra={
+        >
+          <Space direction="vertical">
+            <h5 className="card-movie__title">{this.croppingTitle(title)}</h5>
+            <span className="card-movie__date">{dateRelise}</span>
+            <Content>
+              <GenresConsumer>{(genreNames) => this.renderGenres(genreNames)}</GenresConsumer>
+            </Content>
+            <p className="card-movie__overview">{this.croppingText(overview)}</p>
+            <Rate
+              onChange={(value) => handleRateMovie(id, value)}
+              // defaultValue={rating ? rating : ''}
+              defaultValue={rating}
+              count={10}
+              allowHalf
+              style={{ fontSize: 15 }}
+              className="rate-stars"
+            />
             <div className="rating" style={classRatingColor}>
               {voteAverage}
             </div>
-          }
-        >
-          <Space direction="vertical">
-            <h5 className="card-movie__title">{title}</h5>
-            <span className="card-movie__date">{dateRelise}</span>
-            <Content>
-              {genreIds.map((item) => (
-                <Tag key={item}>{this.transformGenreName(item)}</Tag>
-              ))}
-            </Content>
-            <p className="card-movie__overview">{this.croppingText(overview)}</p>
           </Space>
         </Card>
       </List.Item>
