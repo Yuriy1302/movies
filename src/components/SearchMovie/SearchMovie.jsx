@@ -1,9 +1,10 @@
 import React from 'react';
+import { Input } from 'antd';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 
-import { debounce } from 'lodash';
+import ErrorIndicator from '../ErrorIndicator';
 
-import { Input } from 'antd';
 import './SearchMovie.css';
 
 class SearchMovie extends React.Component {
@@ -14,10 +15,27 @@ class SearchMovie extends React.Component {
   constructor(props) {
     super(props);
     const { onDebounced } = this.props;
-    this.debouncedUpdate = debounce((value) => onDebounced(value), 1500);
+    this.debouncedUpdate = debounce((value) => onDebounced(value), 700);
+    this.state = {
+      hasError: false,
+    };
+  }
+
+  componentDidCatch() {
+    this.setState({ hasError: true });
   }
 
   render() {
+    const { hasError } = this.state;
+
+    if (hasError) {
+      return (
+        <div className="alert_example">
+          <ErrorIndicator />
+        </div>
+      );
+    }
+
     return (
       <Input
         placeholder="Type to search..."

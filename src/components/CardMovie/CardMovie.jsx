@@ -1,7 +1,7 @@
 import React from 'react';
-import { Layout, List, Card, Space, Tag, Rate } from 'antd';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
+import { Layout, List, Card, Space, Tag, Rate } from 'antd';
 
 import { GenresConsumer } from '../ContextGenres';
 
@@ -25,7 +25,7 @@ class CardMovie extends React.Component {
     releaseDate: PropTypes.string,
     genreIds: PropTypes.arrayOf(PropTypes.number).isRequired,
     voteAverage: PropTypes.number.isRequired,
-    rating: PropTypes.number,
+    rating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     handleRateMovie: PropTypes.func.isRequired,
   };
 
@@ -42,12 +42,6 @@ class CardMovie extends React.Component {
     }
     return `${text.slice(0, text.indexOf(' ', 30))} ...`;
   };
-
-  /* transformGenreName = (genreId) => {
-    const { genreNames } = this.props;
-    const [el] = genreNames.filter(({ id }) => genreId === id);
-    return el.name;
-  }; */
 
   renderGenres = (genreNames) => {
     const { genreIds } = this.props;
@@ -109,7 +103,6 @@ class CardMovie extends React.Component {
             <p className="card-movie__overview">{this.croppingText(overview)}</p>
             <Rate
               onChange={(value) => handleRateMovie(id, value)}
-              // defaultValue={rating ? rating : ''}
               defaultValue={rating}
               count={10}
               allowHalf

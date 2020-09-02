@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Layout, List, Spin, Alert, Empty, Tabs, notification } from 'antd';
+import { Layout, List, Spin, Empty, Tabs, notification } from 'antd';
 import PropTypes from 'prop-types';
 
 import CardMovie from '../CardMovie';
 import SearchMovie from '../SearchMovie';
+import ErrorIndicator from '../ErrorIndicator';
 import PaginationMoviesList from '../PaginationMoviesList';
 
 import { GenresProvider } from '../ContextGenres';
@@ -22,9 +23,6 @@ class App extends Component {
     defaultSearchMovie: 'return',
     moviePage: this.defaultPage,
     ratePage: 1,
-    guestSessionID: '73e66455e4e0df85aa0d12388cf9f527', // убрать при включении гостевой сессии
-    // guestSessionID: 'ade831dc162d9f2b5b7f92021f4be6af'
-    // guestSessionID: ''
   };
 
   static propTypes = {
@@ -32,12 +30,11 @@ class App extends Component {
     ratePage: PropTypes.number,
     defaultPage: PropTypes.number,
     defaultSearchMovie: PropTypes.string,
-    guestSessionID: PropTypes.string,
   };
 
   constructor(props) {
     super(props);
-    const { defaultSearchMovie, defaultPage, ratePage, guestSessionID } = this.props;
+    const { defaultSearchMovie, defaultPage, ratePage } = this.props;
     this.state = {
       searchMovie: defaultSearchMovie,
       moviePage: defaultPage,
@@ -48,27 +45,28 @@ class App extends Component {
       genreNames: [],
       error: false,
       loading: true,
-      guestSessionID, // убрать при создании гостевой сессии
-      // guestSessionID: null, // раскомментировать при включении гостевой сессии
+      guestSessionID: null,
       rateList: [],
     };
   }
 
   componentDidMount() {
-    // handleCreateGuestSession вызывать через условие.
-    // Времено отключено, для создания сессий при перезагрузке страницы.
-    // НЕ УДАЛЯТЬ!!!
-    // this.handleCreateGuestSession();
+    const guestSessionID = localStorage.getItem('guestSessionID');
 
-    this.addGenreNames(); // Закомментировано на время настройки провайдера
+    if (guestSessionID) {
+      this.setState({ guestSessionID });
+    } else {
+      this.createGuestSession();
+    }
+
+    this.addGenreNames();
     const { defaultSearchMovie, defaultPage } = this.props;
-    const { guestSessionID, ratePage } = this.state;
+    const { ratePage } = this.state;
     this.updateSearchMovies(defaultSearchMovie, defaultPage);
+
     if (guestSessionID) {
       this.updateRatedMovies(guestSessionID, ratePage);
-    } /* else {
-      this.renderEmptyRate();
-    } */
+    }
   }
 
   componentDidUpdate = (prevProps, prevState) => {
@@ -87,6 +85,13 @@ class App extends Component {
       window.scroll(0, 0);
     }
   };
+
+  componentDidCatch() {
+    this.setState({
+      error: true,
+      loading: false,
+    });
+  }
 
   onError = () => {
     this.setState({
@@ -168,7 +173,7 @@ class App extends Component {
       .catch(this.onError);
   };
 
-  // Rate Movie
+  // Rated Movie
   handleRateMovie = (id, value) => {
     const { guestSessionID } = this.state;
     this.movieService
@@ -191,21 +196,14 @@ class App extends Component {
   };
 
   // Create Guest Session
-  // Временно отключено
-  // НЕ УАЛЯТЬ!!!
-  /* 
   updateGuestSession = (guestSessionID) => {
     this.setState({ guestSessionID });
-  }
+    localStorage.setItem('guestSessionID', guestSessionID);
+  };
 
-  handleCreateGuestSession = () => {
-    this.movieService
-      .createGuestSession()
-        .then(this.updateGuestSession)
-        .then(() => console.log('this.state.guestSessionID -> ', this.state.guestSessionID))
-        .catch(this.onError);
-  }
-*/
+  createGuestSession = () => {
+    this.movieService.createGuestSession().then(this.updateGuestSession).catch(this.onError);
+  };
 
   render() {
     const { Content } = Layout;
@@ -225,17 +223,7 @@ class App extends Component {
     const { defaultPage } = this.props;
 
     if (error) {
-      return (
-        <div className="alert_example">
-          <Alert
-            type="warning"
-            message="Oops!"
-            description="Something went wrong!"
-            style={{ width: 300, fontSize: 18 }}
-            showIcon
-          />
-        </div>
-      );
+      return <ErrorIndicator />;
     }
 
     if (loading) {

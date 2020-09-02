@@ -1,5 +1,4 @@
 .container {
-
 	width: 1010px;
 	background-color: #ffffff;
 	margin: 0 auto;
@@ -19,12 +18,5 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 	text-align: center;
-}
-
-.alert_example {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
 }
 

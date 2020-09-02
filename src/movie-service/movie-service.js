@@ -61,7 +61,6 @@ export default class MovieService {
   };
 
   // Get Rated Movies
-
   async getRatedMovies(guestSessionID, page) {
     try {
       const body = await this.getResource(
@@ -75,8 +74,7 @@ export default class MovieService {
     }
   }
 
-  // Rate Movies
-
+  // Rated Movies
   async postRateMovie(movieId, value, guestSessionID) {
     try {
       const resolve = await fetch(
@@ -100,7 +98,6 @@ export default class MovieService {
   }
 
   // Create Guest Session
-
   async createGuestSession() {
     try {
       const resolve = await fetch(`${this.baseApi}/authentication/guest_session/new${this.apiKey}`);
